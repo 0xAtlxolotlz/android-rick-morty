@@ -1,4 +1,4 @@
-package com.nauatlakatl.rickmorty.data.api
+package com.nauatlakatl.rickmorty.data.common
 
 import com.nauatlakatl.rickmorty.BuildConfig
 import dagger.Module

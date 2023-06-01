@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">Rick and Morty</string>
+    <string name="name_label">Name</string>
+
+    <!-- Filter Dialog -->
+    <string name="dialog_filter_title">Filter</string>
+    <string name="dialog_status_subtitle">Status</string>
+    <string name="dialog_gender_subtitle">Gender</string>
+    <string-array name="status" translatable="false">
+        <item></item>
+        <item>alive</item>
+        <item>dead</item>
+        <item>unknown</item>
+    </string-array>
+    <string-array name="gender" translatable="false">
+        <item></item>
+        <item>female</item>
+        <item>male</item>
+        <item>genderless</item>
+        <item>unknown</item>
+    </string-array>
+    <string name="filter_dialog_ok">OK</string>
+    <string name="filter_dialog_cancel">Cancel</string>
 </resources>

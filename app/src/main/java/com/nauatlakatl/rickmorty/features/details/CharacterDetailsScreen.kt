@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.nauatlakatl.rickmorty.R
+import com.nauatlakatl.rickmorty.ui.composables.LoaderIndicator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,36 +37,70 @@ fun CharacterDetailsScreen(
     characterDetailsViewModel: CharacterDetailsViewModel = hiltViewModel()
 ) {
     val details by characterDetailsViewModel.details.collectAsState()
+    val charactersDetailsState by characterDetailsViewModel.characterDetailsState.collectAsState()
 
     LaunchedEffect(Unit) {
         characterDetailsViewModel.fetchCharacterDetails(characterId)
     }
 
     Scaffold(modifier = modifier.fillMaxSize()) { paddingValues ->
-        Column(modifier = modifier.padding(paddingValues)) {
-            if (details != null) {
-                Box(modifier = modifier.aspectRatio(1F)) {
-                    AsyncImage(
-                        modifier = modifier.fillMaxSize(),
-                        model = details!!.image,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop
-                    )
+        Column(
+            modifier = modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
+        ) {
+            when (charactersDetailsState) {
+                is CharacterDetailsState.IsLoading -> {
+                    if ((charactersDetailsState as CharacterDetailsState.IsLoading).isLoading) {
+                        Box(
+                            modifier = modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) { LoaderIndicator() }
+                    } else {
+                        if (details != null) {
+                            Box(modifier = modifier.aspectRatio(1F)) {
+                                AsyncImage(
+                                    modifier = modifier.fillMaxSize(),
+                                    model = details!!.image,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                            Text(
+                                text = details!!.name,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 24.sp,
+                                modifier = modifier.padding(8.dp)
+                            )
+                            CharacterDetailsRow(
+                                iconResId = R.drawable.ic_heart,
+                                text = details!!.status
+                            )
+                            CharacterDetailsRow(
+                                iconResId = R.drawable.ic_paw,
+                                text = details!!.species
+                            )
+                            CharacterDetailsRow(
+                                iconResId = R.drawable.ic_gender,
+                                text = details!!.gender
+                            )
+                            CharacterDetailsRow(
+                                iconResId = R.drawable.ic_house,
+                                text = details!!.origin.name
+                            )
+                            CharacterDetailsRow(
+                                iconResId = R.drawable.ic_location,
+                                text = details!!.location.name
+                            )
+                        }
+                    }
                 }
-                Text(
-                    text = details!!.name,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    modifier = modifier.padding(8.dp)
-                )
-                CharacterDetailsRow(iconResId = R.drawable.ic_heart, text = details!!.status)
-                CharacterDetailsRow(iconResId = R.drawable.ic_paw, text = details!!.species)
-                CharacterDetailsRow(iconResId = R.drawable.ic_gender, text = details!!.gender)
-                CharacterDetailsRow(iconResId = R.drawable.ic_house, text = details!!.origin.name)
-                CharacterDetailsRow(
-                    iconResId = R.drawable.ic_location,
-                    text = details!!.location.name
-                )
+
+                is CharacterDetailsState.Error -> {
+
+                }
+
+                else -> Unit
             }
         }
     }

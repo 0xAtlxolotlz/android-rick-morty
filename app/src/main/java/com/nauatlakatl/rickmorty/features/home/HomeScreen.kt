@@ -1,5 +1,6 @@
 package com.nauatlakatl.rickmorty.features.home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -71,65 +72,19 @@ fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     var openFilterDialog by remember { mutableStateOf(false) }
-    var filterName by remember { mutableStateOf(EMPTY_FILTER_FIELD) }
-    var filterStatus by remember { mutableStateOf(EMPTY_FILTER_FIELD) }
-    var filterGender by remember { mutableStateOf(EMPTY_FILTER_FIELD) }
-
-    if (openFilterDialog) {
-        Dialog(onDismissRequest = {}) {
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                shape = RoundedCornerShape(size = 10.dp)
-            ) {
-                Column(modifier = Modifier.padding(all = 16.dp)) {
-                    Text(
-                        text = stringResource(R.string.dialog_filter_title),
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        fontSize = 32.sp,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = filterName,
-                        onValueChange = { filterName = it },
-                        label = { Text(stringResource(R.string.name_label)) },
-                        colors = TextFieldDefaults.outlinedTextFieldColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                    )
-                    ExposedDropdownMenuBox(
-                        title = stringResource(R.string.dialog_status_subtitle),
-                        options = stringArrayResource(id = R.array.status),
-                        onOptionSelected = { filterStatus = it }
-                    )
-                    ExposedDropdownMenuBox(
-                        title = stringResource(R.string.dialog_gender_subtitle),
-                        options = stringArrayResource(id = R.array.gender),
-                        onOptionSelected = { filterGender = it }
-                    )
-                    Row(
-                        modifier = modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        TextButton(onClick = { openFilterDialog = false }) {
-                            Text(text = stringResource(id = R.string.filter_dialog_cancel))
-                        }
-                        TextButton(
-                            onClick = { /*TODO*/ },
-                            enabled = filterName.isNotEmpty() || filterStatus.isNotEmpty() || filterGender.isNotEmpty()
-                        ) {
-                            Text(text = stringResource(id = R.string.filter_dialog_ok))
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     val characters by homeViewModel.characters.collectAsState()
 
     LaunchedEffect(Unit) {
         homeViewModel.fetchCharacters()
+    }
+
+    if (openFilterDialog) {
+        FilterDialog(
+            onChangeDialogStatus = { openFilterDialog = it },
+            onConfirmClicked = { name, status, gender ->
+                Log.d("HomeScreen", "Name: $name, Status: $status, Gender: $gender")
+            }
+        )
     }
 
     Scaffold(
@@ -214,6 +169,70 @@ fun CharacterCard(
                     color = Color.White,
                     modifier = modifier.padding(start = 2.dp, end = 2.dp, bottom = 2.dp)
                 )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FilterDialog(
+    onChangeDialogStatus: (Boolean) -> Unit,
+    onConfirmClicked: (String, String, String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var filterName by remember { mutableStateOf(EMPTY_FILTER_FIELD) }
+    var filterStatus by remember { mutableStateOf(EMPTY_FILTER_FIELD) }
+    var filterGender by remember { mutableStateOf(EMPTY_FILTER_FIELD) }
+
+    Dialog(onDismissRequest = {}) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(size = 10.dp)
+        ) {
+            Column(modifier = Modifier.padding(all = 16.dp)) {
+                Text(
+                    text = stringResource(R.string.dialog_filter_title),
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    fontSize = 32.sp,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = filterName,
+                    onValueChange = { filterName = it },
+                    label = { Text(stringResource(R.string.name_label)) },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                )
+                ExposedDropdownMenuBox(
+                    title = stringResource(R.string.dialog_status_subtitle),
+                    options = stringArrayResource(id = R.array.status),
+                    onOptionSelected = { filterStatus = it }
+                )
+                ExposedDropdownMenuBox(
+                    title = stringResource(R.string.dialog_gender_subtitle),
+                    options = stringArrayResource(id = R.array.gender),
+                    onOptionSelected = { filterGender = it }
+                )
+                Row(
+                    modifier = modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = { onChangeDialogStatus(false) }) {
+                        Text(text = stringResource(id = R.string.filter_dialog_cancel))
+                    }
+                    TextButton(
+                        onClick = {
+                            onConfirmClicked(filterName, filterStatus, filterGender)
+                            onChangeDialogStatus(false)
+                        },
+                        enabled = filterName.isNotEmpty() || filterStatus.isNotEmpty() || filterGender.isNotEmpty()
+                    ) {
+                        Text(text = stringResource(id = R.string.filter_dialog_ok))
+                    }
+                }
             }
         }
     }

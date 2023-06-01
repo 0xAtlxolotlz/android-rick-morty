@@ -14,6 +14,7 @@ Clean Code.
 ## Libraries
 
 - Coil
+- Coroutines
 - Hilt
 - Jetpack Compose
 - Lottie

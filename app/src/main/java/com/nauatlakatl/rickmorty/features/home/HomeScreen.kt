@@ -60,6 +60,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.nauatlakatl.rickmorty.R
 import com.nauatlakatl.rickmorty.domain.characters.entity.CharactersEntity
+import com.nauatlakatl.rickmorty.ui.composables.Error
 import com.nauatlakatl.rickmorty.ui.composables.LoaderIndicator
 
 private const val EMPTY_FILTER_FIELD = ""
@@ -132,7 +133,7 @@ fun HomeScreen(
                 }
 
                 is HomeState.Error -> {
-
+                    Error()
                 }
 
                 else -> Unit

@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.nauatlakatl.rickmorty.R
+import com.nauatlakatl.rickmorty.ui.composables.Error
 import com.nauatlakatl.rickmorty.ui.composables.LoaderIndicator
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,7 +98,7 @@ fun CharacterDetailsScreen(
                 }
 
                 is CharacterDetailsState.Error -> {
-
+                    Error()
                 }
 
                 else -> Unit

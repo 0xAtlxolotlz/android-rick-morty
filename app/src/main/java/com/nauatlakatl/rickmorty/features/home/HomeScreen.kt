@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.nauatlakatl.rickmorty.domain.characters.entity.CharactersEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,9 +49,7 @@ fun HomeScreen(
             contentPadding = paddingValues
         ) {
             items(characters) { character ->
-                with(character) {
-                    CharacterCard(name = name, species = species, image = image)
-                }
+                CharacterCard(character)
             }
         }
     }
@@ -58,9 +57,7 @@ fun HomeScreen(
 
 @Composable
 fun CharacterCard(
-    name: String,
-    species: String,
-    image: String,
+    character: CharactersEntity,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -76,7 +73,7 @@ fun CharacterCard(
         ) {
             AsyncImage(
                 modifier = modifier.fillMaxSize(),
-                model = image,
+                model = character.image,
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )
@@ -93,14 +90,14 @@ fun CharacterCard(
                     )
             ) {
                 Text(
-                    text = name,
+                    text = character.name,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     modifier = modifier.padding(horizontal = 2.dp),
                     maxLines = 1
                 )
                 Text(
-                    text = species,
+                    text = character.species,
                     color = Color.White,
                     modifier = modifier.padding(start = 2.dp, end = 2.dp, bottom = 2.dp)
                 )

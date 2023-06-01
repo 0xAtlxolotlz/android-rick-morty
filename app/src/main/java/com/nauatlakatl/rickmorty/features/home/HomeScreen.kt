@@ -60,6 +60,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.nauatlakatl.rickmorty.R
 import com.nauatlakatl.rickmorty.domain.characters.entity.CharactersEntity
+import com.nauatlakatl.rickmorty.ui.composables.LoaderIndicator
 
 private const val EMPTY_FILTER_FIELD = ""
 
@@ -72,6 +73,7 @@ fun HomeScreen(
 ) {
     var openFilterDialog by remember { mutableStateOf(false) }
     val characters by homeViewModel.characters.collectAsState()
+    val homeState by homeViewModel.homeState.collectAsState()
 
     LaunchedEffect(Unit) {
         homeViewModel.fetchCharacters()
@@ -108,13 +110,32 @@ fun HomeScreen(
             )
         }
     ) { paddingValues ->
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = modifier.fillMaxSize(),
-            contentPadding = paddingValues
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentAlignment = Alignment.Center
         ) {
-            items(characters) { character ->
-                CharacterCard(character = character, onClick = onClickCard)
+            when (homeState) {
+                is HomeState.IsLoading -> {
+                    if ((homeState as HomeState.IsLoading).isLoading) {
+                        LoaderIndicator()
+                    } else {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2)
+                        ) {
+                            items(characters) { character ->
+                                CharacterCard(character = character, onClick = onClickCard)
+                            }
+                        }
+                    }
+                }
+
+                is HomeState.Error -> {
+
+                }
+
+                else -> Unit
             }
         }
     }

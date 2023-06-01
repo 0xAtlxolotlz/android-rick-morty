@@ -6,6 +6,7 @@ import com.nauatlakatl.rickmorty.data.common.utils.ResponseListWrapper
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface CharactersApi {
 
@@ -14,4 +15,11 @@ interface CharactersApi {
 
     @GET("character/{id}")
     suspend fun getCharacterById(@Path("id") id: Int): Response<CharacterDetailsResponse>
+
+    @GET("character")
+    suspend fun filterCharacters(
+        @Query("name") name: String,
+        @Query("status") status: String,
+        @Query("gender") gender: String,
+    ): Response<ResponseListWrapper<CharactersResponse>>
 }

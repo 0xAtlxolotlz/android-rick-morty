@@ -14,4 +14,10 @@ interface CharactersRepository {
     suspend fun getAllCharacters(): Flow<BaseResult<List<CharactersEntity>, ResponseListWrapper<CharactersResponse>>>
 
     suspend fun getCharacterDetailsById(id: Int): Flow<BaseResult<CharacterDetailsEntity, ResponseWrapper<CharacterDetailsResponse>>>
+
+    suspend fun filterCharacters(
+        name: String,
+        status: String,
+        gender: String
+    ): Flow<BaseResult<List<CharactersEntity>, ResponseListWrapper<CharactersResponse>>>
 }

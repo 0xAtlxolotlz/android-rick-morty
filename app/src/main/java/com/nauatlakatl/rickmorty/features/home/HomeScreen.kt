@@ -1,6 +1,5 @@
 package com.nauatlakatl.rickmorty.features.home
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -82,7 +81,11 @@ fun HomeScreen(
         FilterDialog(
             onChangeDialogStatus = { openFilterDialog = it },
             onConfirmClicked = { name, status, gender ->
-                Log.d("HomeScreen", "Name: $name, Status: $status, Gender: $gender")
+                homeViewModel.filterCharacters(
+                    name,
+                    status,
+                    gender
+                )
             }
         )
     }

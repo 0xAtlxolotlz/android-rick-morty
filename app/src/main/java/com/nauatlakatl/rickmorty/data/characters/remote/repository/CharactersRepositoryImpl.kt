@@ -74,4 +74,36 @@ class CharactersRepositoryImpl @Inject constructor(private val charactersApi: Ch
         }
     }
 
+    override suspend fun filterCharacters(
+        name: String,
+        status: String,
+        gender: String
+    ): Flow<BaseResult<List<CharactersEntity>, ResponseListWrapper<CharactersResponse>>> {
+        return flow {
+            val response = charactersApi.filterCharacters(name, status, gender)
+            if (response.isSuccessful) {
+                val body = response.body()!!
+                val characters = mutableListOf<CharactersEntity>()
+                body.data?.forEach { charactersResponse ->
+                    characters.add(
+                        CharactersEntity(
+                            charactersResponse.id,
+                            charactersResponse.name,
+                            charactersResponse.species,
+                            charactersResponse.image
+                        )
+                    )
+                }
+                emit(BaseResult.Success(characters))
+            } else {
+                val type = object : TypeToken<ResponseListWrapper<CharactersResponse>>() {}.type
+                val error = Gson().fromJson<ResponseListWrapper<CharactersResponse>>(
+                    response.errorBody()!!.charStream(), type
+                )!!
+                error.code = response.code()
+                emit(BaseResult.Error(error))
+            }
+        }
+    }
+
 }

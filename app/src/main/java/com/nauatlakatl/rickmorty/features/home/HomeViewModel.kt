@@ -3,6 +3,7 @@ package com.nauatlakatl.rickmorty.features.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nauatlakatl.rickmorty.domain.characters.entity.CharactersEntity
+import com.nauatlakatl.rickmorty.domain.characters.usecase.FilterCharactersUseCase
 import com.nauatlakatl.rickmorty.domain.characters.usecase.GetCharactersUseCase
 import com.nauatlakatl.rickmorty.domain.common.BaseResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getCharactersUseCase: GetCharactersUseCase
+    private val getCharactersUseCase: GetCharactersUseCase,
+    private val filterCharactersUseCase: FilterCharactersUseCase
 ) : ViewModel() {
 
     private val _homeState = MutableStateFlow<HomeState>(HomeState.Init)
@@ -39,6 +41,24 @@ class HomeViewModel @Inject constructor(
     fun fetchCharacters() {
         viewModelScope.launch {
             getCharactersUseCase.execute()
+                .onStart { showLoading() }
+                .catch { exception ->
+                    hideLoading()
+                    showError(exception.message.toString())
+                }
+                .collect { result ->
+                    hideLoading()
+                    when (result) {
+                        is BaseResult.Success -> _characters.value = result.data
+                        is BaseResult.Error -> showError(result.rawResponse.code.toString())
+                    }
+                }
+        }
+    }
+
+    fun filterCharacters(name: String, status: String, gender: String) {
+        viewModelScope.launch {
+            filterCharactersUseCase.execute(name, status, gender)
                 .onStart { showLoading() }
                 .catch { exception ->
                     hideLoading()

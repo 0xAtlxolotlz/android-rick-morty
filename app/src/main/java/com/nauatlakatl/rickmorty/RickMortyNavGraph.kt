@@ -1,5 +1,6 @@
 package com.nauatlakatl.rickmorty
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -24,7 +25,9 @@ fun RickMortyNavGraph(
         modifier = modifier
     ) {
         composable(RickMortyDestinations.HOME_ROUTE) {
-            HomeScreen()
+            HomeScreen(
+                onClickCard = { characterId -> Log.d("RickMortyNavGraph", "$characterId") }
+            )
         }
     }
 }

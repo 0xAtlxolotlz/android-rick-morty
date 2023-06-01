@@ -1,6 +1,7 @@
 package com.nauatlakatl.rickmorty.features.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -33,6 +34,7 @@ import com.nauatlakatl.rickmorty.domain.characters.entity.CharactersEntity
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    onClickCard: (Int) -> Unit,
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -49,7 +51,7 @@ fun HomeScreen(
             contentPadding = paddingValues
         ) {
             items(characters) { character ->
-                CharacterCard(character)
+                CharacterCard(character = character, onClick = onClickCard)
             }
         }
     }
@@ -58,12 +60,14 @@ fun HomeScreen(
 @Composable
 fun CharacterCard(
     character: CharactersEntity,
+    onClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
             .aspectRatio(1F)
-            .padding(4.dp),
+            .padding(4.dp)
+            .clickable { onClick(character.id) },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {

@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface CharactersRepository {
 
-    fun getAllCharacters(): Flow<BaseResult<List<CharactersEntity>, ResponseListWrapper<CharactersResponse>>>
+    suspend fun getAllCharacters(): Flow<BaseResult<List<CharactersEntity>, ResponseListWrapper<CharactersResponse>>>
 }

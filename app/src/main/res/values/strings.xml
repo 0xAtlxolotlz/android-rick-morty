@@ -22,4 +22,5 @@
     <string name="filter_dialog_ok">OK</string>
     <string name="filter_dialog_cancel">Cancel</string>
     <string name="error">An error occurred :(</string>
+    <string name="no_results">There are no results!</string>
 </resources>

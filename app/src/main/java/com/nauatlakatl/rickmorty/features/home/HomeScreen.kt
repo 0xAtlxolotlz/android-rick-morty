@@ -59,9 +59,11 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.nauatlakatl.rickmorty.R
+import com.nauatlakatl.rickmorty.data.common.utils.ERROR_404
 import com.nauatlakatl.rickmorty.domain.characters.entity.CharactersEntity
 import com.nauatlakatl.rickmorty.ui.composables.Error
 import com.nauatlakatl.rickmorty.ui.composables.LoaderIndicator
+import com.nauatlakatl.rickmorty.ui.composables.NoResults
 
 private const val EMPTY_FILTER_FIELD = ""
 
@@ -122,18 +124,24 @@ fun HomeScreen(
                     if ((homeState as HomeState.IsLoading).isLoading) {
                         LoaderIndicator()
                     } else {
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(2)
-                        ) {
-                            items(characters) { character ->
-                                CharacterCard(character = character, onClick = onClickCard)
+                        if (characters.isNotEmpty()) {
+                            LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+                                items(characters) { character ->
+                                    CharacterCard(character = character, onClick = onClickCard)
+                                }
                             }
+                        } else {
+                            NoResults()
                         }
                     }
                 }
 
                 is HomeState.Error -> {
-                    Error()
+                    val error = homeState as HomeState.Error
+                    when (error.message) {
+                        ERROR_404 -> NoResults()
+                        else -> Error()
+                    }
                 }
 
                 else -> Unit

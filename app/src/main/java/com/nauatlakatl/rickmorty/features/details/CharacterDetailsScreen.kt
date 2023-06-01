@@ -27,8 +27,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.nauatlakatl.rickmorty.R
+import com.nauatlakatl.rickmorty.data.common.utils.ERROR_404
 import com.nauatlakatl.rickmorty.ui.composables.Error
 import com.nauatlakatl.rickmorty.ui.composables.LoaderIndicator
+import com.nauatlakatl.rickmorty.ui.composables.NoResults
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,7 +100,11 @@ fun CharacterDetailsScreen(
                 }
 
                 is CharacterDetailsState.Error -> {
-                    Error()
+                    val error = charactersDetailsState as CharacterDetailsState.Error
+                    when (error.message) {
+                        ERROR_404 -> NoResults()
+                        else -> Error()
+                    }
                 }
 
                 else -> Unit

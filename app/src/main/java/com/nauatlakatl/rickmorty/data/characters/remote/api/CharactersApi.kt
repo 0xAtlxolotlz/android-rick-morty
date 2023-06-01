@@ -7,6 +7,6 @@ import retrofit2.http.GET
 
 interface CharactersApi {
 
-    @GET("/character")
+    @GET("character")
     suspend fun getAllCharacters(): Response<ResponseListWrapper<CharactersResponse>>
 }
